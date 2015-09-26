@@ -1,0 +1,23 @@
+{
+  "name": "living-dashboard",
+  "version": "0.1.0",
+  "description": "A living dashboard application",
+  "main": "server.js",
+  "author": {
+    "name": "Hung Do",
+    "email": "hungdo.aya@gmail.com"
+  },
+  "scripts": {
+    "start": "nodemon server.js"
+  },
+  "dependencies": {
+    "express": "3.x.x",
+    "ejs": "~0.8.4",
+    "bourne": "0.3"
+  },
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-contrib-jst": "^0.6.0",
+    "nodemon": "1.7.1"
+  }
+}
