@@ -18,39 +18,158 @@
 	}
 });
 
-var CreateEventView = Backbone.View.extend({
+var EventsView = Backbone.View.extend({
+	tagName: 'table',
+	className: 'table',
+	template: JST.events,
+	initialize: function (options) {
+		this.nav = options.nav;
+		this.collection.refresh();
+		this.children = {};
+		this.listenTo(this.collection, 'add', this.addRow);
+		this.listenTo(this.collection, 'sort', this.renderRows);
+		this.collection.refresh();
+	},
+	events: {
+		'click th[data-field]': 'sort'
+	},
+	render: function () {
+		this.el.innerHTML = this.template();
+		this.renderRows();
+		return this;
+	},
+	renderRows: function () {
+		this.collection.forEach(this.addRow, this);
+	},
+	addRow: function (event) {
+		if (!this.children[event.id]) {
+			this.children[event.id] = new EventView({
+				model: event,
+				nav: this.nav
+			}).render();
+		}
+		
+		this.$('tbody').append(this.children[event.id].el);
+	},
+	sort: function (evt) {
+		var target = evt.currentTarget,
+			c = this.collection;
+			
+		c.comparator = target.getAttribute('data-field');
+		
+		if (target.getAttribute('data-direction') === 'asc') {
+			c.reverse();
+			this.fixSortIcons(target, 'desc');
+		} else {
+			c.sort();
+			this.fixSortIcons(target, 'asc');
+		}
+	},
+	fixSortIcons: function (target, dir) {
+		var icon = 'glyphicon glyphicon-arrow-' + (dir === 'asc' ? 'down' : 'up');
+		this.$('th i').remove();
+		target.setAttribute('data-direction', dir);
+		$('<i>').addClass(icon).appendTo(target);
+	}
+});
+
+var EventView = Backbone.View.extend({
+	tagName: 'tr',
+	template: JST.event,
+	initialize: function (options) {
+		this.nav = options.nav;
+		this.listenTo(this.model, 'remove', this.remove);
+		this.listenTo(this.model, 'change', this.render);
+	},
+	events: {
+		'click .delete': 'destroy',
+		'click .edit': 'edit'
+	},
+	render: function () {
+		var attrs = this.model.toJSON(),
+			date = moment(attrs.date),
+			diff = date.unix() - moment().unix();
+		
+		attrs.date = date.calendar();
+		attrs.createdOn = moment(attrs.createdOn).fromNow();
+		this.el.innerHTML = this.template(attrs);
+		
+		if (diff < 0) {
+			this.el.className = 'error';
+		} else if (diff < 172800) {
+			this.el.className = 'warning';
+		} else if (diff < 604800) {
+			this.el.className = 'info';
+		}
+		
+		return this;
+	},
+	destroy: function (evt) {
+		evt.preventDefault();
+		this.model.destroy();
+		this.remove();
+	},
+	remove: function () {
+		this.$el.fadeOut(Backbone.View.prototype.remove.bind(this));
+		return false;
+	},
+	edit: function (evt) {
+		evt.preventDefault();
+		this.nav('/edit/' + this.model.get('id'), { trigger: true });
+	}
+});
+var ModifyEventView = Backbone.View.extend({
 	className: 'modal fade',
-	template: JST.createEvent,
+	template: JST.modifyEvent,
+	events: {
+		'click .close': 'close',
+		'click .modify': 'modify'
+	},
 	initialize: function (options) {
 		this.nav = options.nav;
 		this.$el.on('hidden.bs.modal', this.hide.bind(this));
 	},
-	events: {
-		'click .close': 'close',
-		'click .create': 'create'
+	hide: function () {
+		this.remove();
+		this.nav('/');
 	},
 	render: function (model) {
-		this.el.innerHTML = this.template();
+		var data = this.model.toJSON();
+		data.heading = this.heading;
+		data.btnText = this.btnText;
+		this.el.innerHTML = this.template(data);
 		this.$el.modal('show');
 		return this;
 	},
-	close: function (evt) {
+	modify: function (evt) {
 		evt.preventDefault();
-		this.$el.modal('hide');
-	},
-	create: function (evt) {
-		evt.preventDefault();
-		var e = {
+		var a = {
 			title: this.$('#title').val(),
 			details: this.$('#details').val(),
 			date: this.$('#date').val()
 		};
 		this.$el.modal('hide');
-		this.collection.create(e, { wait: true });
+		this.save(a);
 		return false;
+	}
+});
+
+var EditEventView = ModifyEventView.extend({
+	heading: 'Edit Event',
+	btnText: 'Update',
+	save: function (e) {
+		this.model.save(e);
+	}
+});
+
+var CreateEventView = ModifyEventView.extend({
+	heading: 'Create New Event',
+	btnText: 'Create',
+	initialize: function (options) {
+		ModifyEventView.prototype.initialize.call(this, options);
+		this.model = new Event();
 	},
-	hide: function () {
-		this.remove();
-		this.nav('/');
+	save: function (e) {
+		this.collection.create(e, { wait: true });
 	}
 });

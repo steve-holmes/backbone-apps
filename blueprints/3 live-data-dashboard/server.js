@@ -30,6 +30,24 @@ app.post('/events', function (req, res) {
 	});
 });
 
+app.delete('/events/:id', function (req, res) {
+	db.delete({ id: parseInt(req.params.id, 10) }, function () {
+		res.json({});
+	});
+});
+
+app.put('/events/:id', function (req, res) {
+	var e = {
+		title: req.body.title,
+		details: req.body.details,
+		date: req.body.date
+	};
+	
+	db.update({ id: parseInt(req.params.id, 10) }, e, function (err, e) {
+		res.json(e);
+	});
+});
+
 app.get('/*', function (req, res) {
 	db.find(function (err, events) {
 		res.render('index.ejs', { events: JSON.stringify(events) });
