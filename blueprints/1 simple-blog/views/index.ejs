@@ -1,0 +1,52 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title> Simple Blog </title>
+</head>
+<body>
+    <div id="main"></div>
+    
+    <script type="text/template" id="postView">
+        <a href="/">All Posts</a>
+        <h1>{{title}}</h1>
+        <p>{{pubDate}}</p>
+        {{content}}
+    </script>
+    
+    <script type="text/template" id="postFormView">
+        <a href="/">All Posts</a>
+        <input type="text" id="postTitle" placeholder = "post title" />
+        <br />
+        <textarea id="postText"></textarea>
+        <br />
+        <button id="submitPost"> Post </button>
+    </script>
+
+    <script type="text/template" id="commentView">
+        <hr />
+        <p><strong>{{name}}</strong> said on {{date}}: </p>
+        <p>{{text}}</p>
+    </script>
+
+    <script type="text/template" id="commentFormView">
+        <input type="text" id="cmtName" placeholder="name" /><br />
+        <textarea id="cmtText"></textarea><br />
+        <button id="submitComment"> Submit </button>
+    </script>
+
+    <script src="/lib/jquery.js"></script>
+    <script src="/lib/underscore.js"></script>
+    <script src="/lib/backbone.js"></script>
+    <script src="/app.js"></script>
+    
+    <script>
+        var postRouter = new PostRouter({
+            posts: new Posts(<%- posts %>),
+            main: $('#main')
+        });
+        Backbone.history.start({ pushState: true });
+    </script>
+</body>
+</html>

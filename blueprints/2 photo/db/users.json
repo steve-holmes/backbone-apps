@@ -1,0 +1,56 @@
+[
+	{
+		"username": "hungdo",
+		"passwordHash": "$2a$10$SFPXyfuYTJ/d0LBhhRCOLecKAJknsTq3SGvztL5ztKEo/HsIcxOuW",
+		"following": [],
+		"id": 1
+	},
+	{
+		"username": "tien",
+		"passwordHash": "$2a$10$EDUfSz1xm0IcU11B.stcH.u08cKY3PInTzuMvbyGJPrdzcLQ8eWBa",
+		"following": [],
+		"id": 2
+	},
+	{
+		"username": "quynh",
+		"passwordHash": "$2a$10$gi2EAc/RnltW2c65JqppLO5JXpv3ngI./brgQ4yP6HYcqw01PHGr.",
+		"following": [],
+		"id": 3
+	},
+	{
+		"username": "thoa",
+		"passwordHash": "$2a$10$IucmwOOrbJHSFegBk4zxU.cWCmzV/UBdjqfSSQltwXtaNROFmCVkG",
+		"following": [],
+		"id": 4
+	},
+	{
+		"username": "hanh",
+		"passwordHash": "$2a$10$JYu0srhYxJ1fbf74ajTrfO4f7vA.LIP9ff/mRhaIMJpDaCwTgVNhq",
+		"following": [],
+		"id": 5
+	},
+	{
+		"username": "nguyen",
+		"passwordHash": "$2a$10$sa/Bd6H0SvE94ZQNyLkDzuOuawzP3/LY99E8e1BmvaxwbRBYB0bsW",
+		"following": [],
+		"id": 6
+	},
+	{
+		"username": "method",
+		"passwordHash": "$2a$10$sa/Bd6H0SvE94ZQNyLkDzumwp4GlLCQMDgntnRgsC7VX/0hPuS6LG",
+		"following": [],
+		"id": 7
+	},
+	{
+		"username": "field",
+		"passwordHash": "$2a$10$RRDikOPUGqL8kX9H/jf2xunQKc0gYPVnILilMxVVSxT0wTzxHtLoy",
+		"following": [],
+		"id": 8
+	},
+	{
+		"username": "cfere",
+		"passwordHash": "$2a$10$nzb05xyNkWqj7mXKYxXr1OEtZ3WHrZVuMhGCOyE.5jDxmOGbCqTYm",
+		"following": [],
+		"id": 9
+	}
+]
