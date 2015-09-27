@@ -1,0 +1,21 @@
+{
+  "name": "calendar",
+  "version": "0.1.0",
+  "description": "A calendar application",
+  "main": "server.js",
+  "author": {
+    "name": "Hung Do",
+    "email": "hungdo.aya@gmail.com"
+  },
+  "scripts": {
+    "start": "nodemon server.js"
+  },
+  "dependencies": {
+    "express": "3.x.x",
+    "ejs": "~0.8.4",
+    "bourne": "0.3"
+  },
+  "devDependencies": {
+    "nodemon": "1.7.1"
+  }
+}
