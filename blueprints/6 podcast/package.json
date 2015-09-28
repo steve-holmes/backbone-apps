@@ -1,7 +1,7 @@
 {
-  "name": "photo",
+  "name": "podcast",
   "version": "0.1.0",
-  "description": "A Photo Application",
+  "description": "A podcast application",
   "main": "server.js",
   "author": {
     "name": "Hung Do",
@@ -16,7 +16,9 @@
     "ejs": "~0.8.4",
     "express": "3.x.x",
     "passport": "^0.3.0",
-    "passport-local": "^1.0.0"
+    "passport-local": "^1.0.0",
+    "q": "^1.4.1",
+    "xml2js": "^0.4.12"
   },
   "devDependencies": {
     "nodemon": "1.7.1"

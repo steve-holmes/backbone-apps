@@ -3,7 +3,7 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title> Name </title>
+    <title> A Photo Application </title>
 </head>
 <body>
     <div id="main"></div>
@@ -13,10 +13,41 @@
             <li><a href="/">Home</a></li>
             <li><a href="/users">All Users</a></li>
             <li><a href="/users/{{id}}">My Profile</a></li>
+            <li><a href="/upload">Add Photo</a></li>
             <li>Logged in as <strong>{{ username }}</strong></li>
             <li><a href="/logout">Log out</a></li>
         </ul>
         <hr />
+    </script>
+    
+    <script type="text/template" id="addPhotoView">
+        <p>Photo: <input type="file" id="imageUpload" /></p>
+        <p>Caption: <input type="text" id="imageCaption" /></p>
+        <button> Upload </button>
+    </script>
+    
+    <script type="text/template" id="photosView">
+        <a href="/photo/{{id}}"><img src="{{path}}" /></a>
+    </script>
+    
+    <script type="text/template" id="userView">
+        <h1>{{username}}</h1>
+        <ul></ul>
+    </script>
+    
+    <script type="text/template" id="photoPageView">
+        <img src="{{path}}" />
+        <p> {{caption}} <small> by {{username}}</small></p>
+        <div>
+            <textarea id="commentText"></textarea>
+            <button> Comment </button>
+        </div>
+        <ul></ul>
+    </script>
+    
+    <script type="text/template" id="commentView">
+        <p><strong>{{username}}</strong> said </p>
+        <p>{{text}}</p>
     </script>
 
     <script src="/lib/jquery.js"></script>
@@ -27,7 +58,8 @@
     
     <script>
         var r = new AppRouter({
-            main: $('#main')
+            main: $('#main'),
+            userPhotos: new Photos(<%- userPhotos %>)
         });
         Backbone.history.start({ pushState: true });
     </script>

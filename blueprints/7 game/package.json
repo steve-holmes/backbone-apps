@@ -1,7 +1,7 @@
 {
-  "name": "photo",
+  "name": "seven-words-game",
   "version": "0.1.0",
-  "description": "A Photo Application",
+  "description": "A seven words game",
   "main": "server.js",
   "author": {
     "name": "Hung Do",

@@ -1,0 +1,16 @@
+<% include header %>
+<div id="main">
+	<h1> Sign In </h1>
+	<form method="post" action="/login">
+		<p>Username: <input name="username" type="text" /></p>
+		<p>Password: <input name="password" type="password" /></p>
+		<button>Log In</button>
+	</form>
+	<h1> Sign Up </h1>
+	<form method="post" action="/create">
+		<p>Username: <input name="username" type="text" /></p>
+		<p>Password: <input name="password" type="password" /></p>
+		<button>Create Account</button>
+	</form>
+</div>
+<% include footer %>
