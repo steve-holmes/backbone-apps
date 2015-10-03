@@ -36,6 +36,16 @@ function safe (user) {
 	return clone;
 }
 
+function followingPhotos(user, callback) {
+	var allPhotos = [];
+	user.following.forEach(function (f) {
+		photos.find({ userId: f }, function (err, photos) {
+			allPhotos = allPhotos.concat(photos);
+		});
+	});
+	callback(allPhotos);
+}
+
 app.get('/login', function (req, res) {
 	res.render('login.ejs');
 });
@@ -107,29 +117,31 @@ app.post('/photos/:id/comments', function (req, res) {
 	});
 });
 
+// /photos/11: Photo with ID 11
+// /photos/following: Photos of all the users the logged-in user in following
+// /photos/user/2: Photos of users with ID 2
 app.get(/\/photos(\/)?([\w\/]+)?/, function (req, res) {
 	var getting = req.params[1],
 		match;
 	
 	if (getting) {
+		// /photos/11: Photo with ID 11
 		if (!isNaN(parseInt(getting, 10))) {
 			photos.findOne({ id: parseInt(getting, 10) }, function (err, photo) {
 				res.json(photo);
 			});
 		} else {
-			match = getting.march(/user\/(\d+)?/);
+			// /photos/user/2: Photos of users with ID 2
+			match = getting.match(/user\/(\d+)?/);
 			if (match) {
 				photos.find({ userId: parseInt(match[1], 10) }, function (err, photos) {
 					res.json(photos);
 				});
+			// /photos/following: Photos of all the users the logged-in user in following
 			} else if (getting === 'following') {
-				var allPhotos = [];
-				req.user.following.forEach(function (f) {
-					photos.find({ userId: f }, function (err, photos) {
-						allPhotos = allPhotos.concat(photos);
-					});
+				followingPhotos(req.user, function (allPhotos) {
+					res.json(allPhotos);
 				});
-				res.json(allPhotos);
 			} else {
 				res.json({});
 			}
@@ -140,7 +152,7 @@ app.get(/\/photos(\/)?([\w\/]+)?/, function (req, res) {
 });
 
 app.get('/users.json', function (req, res) {
-	users.find(function (users) {
+	users.find(function (err, users) {
 		res.json(users.map(safe));
 	});
 });
@@ -151,15 +163,43 @@ app.get('/user-:id.json', function (req, res) {
 	});
 });
 
+app.post('/follow', function (req, res) {
+	var id = parseInt(req.body.userId, 10);
+	if (req.user.following.indexOf(id) === -1) {
+		req.user.following.push(id);
+		users.update({ id: req.user.id }, req.user, function (err, users) {
+			res.json(safe(users[0]));
+		});
+	} else {
+		res.json(safe(req.user));
+	}
+});
+
+app.delete('/follow/:id', function (req, res) {
+	var id = parseInt(req.params.id, 10),
+		index = req.user.following.indexOf(id);
+	if (index !== -1) {
+		req.user.following.splice(index, 1);
+		users.update({ id: req.user.id } , req.user, function (err, users) {
+			res.json(safe(users[0]));
+		});
+	} else {
+		res.json(safe(req.user));
+	}
+});
+
 app.get('/*', function (req, res) {
 	if (!req.user) {
 		res.redirect('/login');
 		return;
 	}
-	photos.find({ userId: req.user.id }, function (err, photos) {
-		res.render('index.ejs', {
-			user: JSON.stringify(safe(req.user)),
-			userPhotos: JSON.stringify(photos)
+	followingPhotos(req.user, function (followingPhotos) {
+		photos.find({ userId: req.user.id }, function (err, photos) {
+			res.render('index.ejs', {
+				user: JSON.stringify(safe(req.user)),
+				userPhotos: JSON.stringify(photos),
+				followingPhotos: JSON.stringify(followingPhotos)
+			});
 		});
 	});
 });

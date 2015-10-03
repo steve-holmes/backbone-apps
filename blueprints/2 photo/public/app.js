@@ -4,7 +4,7 @@
 
 var Photo = Backbone.Model.extend({
 	urlRoot: '/photos',
-	sync: function (method, mode, options) {
+	sync: function (method, model, options) {
 		var opts = {
 			url: this.url(),
 			success: function (data) {
@@ -62,6 +62,10 @@ var Users = Backbone.Collection.extend({
 	url: '/users.json'
 });
 
+var Follow = Backbone.Model.extend({
+	urlRoot: '/follow'
+});
+
 var NavView = Backbone.View.extend({
 	template: _.template($('#navView').html()),
 	render: function () {
@@ -90,7 +94,7 @@ var AddPhotoView = Backbone.View.extend({
 			caption: $('#imageCaption').val()
 		});
 		this.photos.create(photo, { wait: true });
-		this.el.reste();
+		this.el.reset();
 	}
 });
 
@@ -153,11 +157,9 @@ var UserView = Backbone.View.extend({
 	render: function () {
 		this.el.innerHTML = this.template(this.model.toJSON());
 		var ul = this.$('ul');
-		this.collection.forEach(function (photo) {
-			ul.append(new PhotoPageView({
-				model: photo
-			}).render().el);
-		});
+		this.$el.append(new PhotosView({
+			collection: this.collection
+		}).render().el);
 		return this;
 	},
 });
@@ -182,7 +184,7 @@ var UserListItemView = Backbone.View.extend({
 		'click #unfollow': 'unfollow'
 	},
 	render: function () {
-		this.el.innerHTML = this.template(this.mode.toJSON());
+		this.el.innerHTML = this.template(this.model.toJSON());
 		if (USER.username === this.model.get('username')) {
 			this.$el.append(' (me)');
 		} else {
@@ -209,7 +211,7 @@ var UserListItemView = Backbone.View.extend({
 	},
 	unfollow: function (evt) {
 		var thiz = this,
-			f = new Follow({ userId: thiz.model.id });
+			f = new Follow({ id: thiz.model.id });
 		f.destroy().then(function (user) {
 			USER.following = user.following;
 			thiz.update();
@@ -222,6 +224,7 @@ var AppRouter = Backbone.Router.extend({
 	initialize: function (options) {
 		this.main = options.main;
 		this.userPhotos = options.userPhotos;
+		this.followingPhotos = options.followingPhotos;
 		this.navView = new NavView();
 	},
 	routes: {
@@ -232,7 +235,11 @@ var AppRouter = Backbone.Router.extend({
 		'photo/:id': 'showPhoto'
 	},
 	index: function () {
+		var photosView = new PhotosView({
+			collection: this.followingPhotos
+		});
 		this.main.html(this.navView.render().el);
+		this.main.append(photosView.render().el);
 	},
 	upload: function () {
 		var apv = new AddPhotoView({ photos: this.userPhotos }),
@@ -260,11 +267,11 @@ var AppRouter = Backbone.Router.extend({
 		
 		function render() {
 			var userView = new UserView({
-				model: user.toJSON(),
+				model: user,
 				collection: photos
 			});
 			thiz.main.html(thiz.navView.render().el);
-			this.main.append(userView.render().el);
+			thiz.main.append(userView.render().el);
 		}
 		
 		if (id === USER.id) {

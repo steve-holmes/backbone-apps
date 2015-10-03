@@ -59,7 +59,8 @@
     <script>
         var r = new AppRouter({
             main: $('#main'),
-            userPhotos: new Photos(<%- userPhotos %>)
+            userPhotos: new Photos(<%- userPhotos %>),
+            followingPhotos: new Photos(<%- followingPhotos %>)
         });
         Backbone.history.start({ pushState: true });
     </script>
